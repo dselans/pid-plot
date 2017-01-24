@@ -1,0 +1,68 @@
+<html>
+  <head>
+    <title>pid-plot</title>
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="https://bootswatch.com/cyborg/bootstrap.min.css">
+
+    <style>
+    tr th, tr td {
+      cursor: pointer;
+    }
+
+    /* Small devices (tablets, 768px and up) */
+    @media (min-width: 768px) { #search-input { width: 400px; } }
+
+    /* Medium devices (desktops, 992px and up) */
+    @media (min-width: 992px) { #search-input { width: 600px; } }
+
+    /* Large devices (large desktops, 1200px and up) */
+    @media (min-width: 1200px) { #search-input { width: 800px; } }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+
+  <body>
+    <div class="container">
+
+        <div class="row">
+          <div class="col-lg-12 col-md-10 col-sm-8">
+
+            <nav class="navbar navbar-inverse">
+              <div class="container-fluid">
+                <div class="navbar-header">
+                  <a class="navbar-brand" href="#">pid-plot</a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+                  <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/view/30m">30m</a></li>
+                    <li><a href="/view/1h">1h</a></li>
+                    <li><a href="/view/3h">3h</a></li>
+                    <li><a href="/view/6h">6h</a></li>
+                    <li><a href="/view/12h">12h</a></li>
+                    <li><a href="/view/24h">24h</a></li>
+                  </ul>
+                </div>
+              </div>
+            </nav>
+
+            <div class="jumbotron" style="margin-top: 20px; padding: 40px">
+              {{ if .Error }}
+              <p>ERROR: {{ .Error }}</p>
+              {{ else }}
+              <h3>{{ .Slice }} View</h3>
+
+              <p>CPU</p>
+              <img src="/view/{{ .Slice }}/cpu_metrics.png">
+              <p>Memory</p>
+              <img src="/view/{{ .Slice }}/mem_metrics.png">
+              {{ end }}
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+  </body>
+</html>
