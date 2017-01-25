@@ -8,7 +8,6 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 	"github.com/wcharczuk/go-chart"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
@@ -16,8 +15,8 @@ import (
 var (
 	version = "No version specified"
 
-	envFile = kingpin.Flag("envfile", "Specify a different dotenv file to use for loading env vars").Short('f').Default(".env").String()
-	debug   = kingpin.Flag("debug", "Enable debug output").Short('d').Bool()
+	pidArg = kingpin.Arg("pid", "PID to watch").Required().Int32()
+	debug  = kingpin.Flag("debug", "Enable debug output").Short('d').Bool()
 )
 
 type view struct {
@@ -36,11 +35,6 @@ func init() {
 
 	if *debug {
 		log.SetLevel(log.DebugLevel)
-	}
-
-	log.Debugf("Loading env file: %s", *envFile)
-	if err := godotenv.Load(*envFile); err != nil {
-		log.Warningf("Unable to load dotenv file '%v': %v", *envFile, err.Error())
 	}
 }
 
@@ -109,6 +103,18 @@ func ImageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	p, err := NewPID(*pidArg)
+	if err != nil {
+		log.Fatalf("PID watcher error: %v", err)
+	}
+
+	go p.Watch()
+
+	time.Sleep(5 * time.Second)
+
+	stats := p.GetStats()
+	log.Infof("Our stats here: %v", stats)
+
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", BaseHandler)
 	router.HandleFunc("/view/{slice}/{type}_metrics.png", ImageHandler)
