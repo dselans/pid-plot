@@ -48,6 +48,7 @@ func NewPID(pid int32) (*PID, error) {
 	}, nil
 }
 
+// Collect pid stats every WATCH_INTERVAL and update p.stats with results
 func (p *PID) Watch() {
 	p.Looper.Loop(func() error {
 		log.Debugf("Fetching state for pid %v", p.Process.Pid)
@@ -69,14 +70,16 @@ func (p *PID) Watch() {
 	})
 }
 
+// Safely update p.stats
 func (p *PID) updateStats(entry *StatsEntry) {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 	p.stats = append(p.stats, entry)
 }
 
+// Safely return a copy of p.stats
 func (p *PID) GetStats() []StatsEntry {
-	copyStats := make([]StatsEntry, len(p.stats))
+	var copyStats []StatsEntry
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 
