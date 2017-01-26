@@ -77,12 +77,6 @@ func (s *Server) ImageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Infof("Our dataset XValues len: %v", len(dataset.XValues))
-	log.Infof("Our dataset YValues len: %v", len(dataset.YValues))
-	log.Infof("Datasets first time entry: %v", dataset.XValues[0])
-	log.Infof("Datasets second time entry: %v", dataset.XValues[1])
-	log.Infof("Datasets fith time entry: %v", dataset.XValues[4])
-
 	graph := chart.Chart{
 		XAxis: chart.XAxis{
 			Style:          chart.StyleShow(),
