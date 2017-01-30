@@ -16,4 +16,8 @@ You can drill down to a specific timeslice by passing a time.Duration compatible
 
 PID resources are collected every 1s. Once the server is stopped, metrics collection stops.
 
+Here's a screenshot too!
+
+![screenshot](/img/screenshot.png?raw=true)
+
 That's all folks!
