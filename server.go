@@ -38,9 +38,14 @@ func (s *Server) SliceHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	slice := vars["slice"]
 
-	t, err := template.ParseFiles("index.template")
+	data, err := Asset("index.template")
 	if err != nil {
-		log.Fatalf("Unable to find required template: %v", err)
+		log.Fatalf("Unable to find index asset: %v", err)
+	}
+
+	t, err := template.New("index.template").Parse(string(data))
+	if err != nil {
+		log.Fatalf("Unable to parse index template: %v", err)
 	}
 
 	d, err := time.ParseDuration(slice)
@@ -64,14 +69,18 @@ func (s *Server) ImageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var datasetFunc func(time.Duration, []StatsEntry) (*XYDataSet, error)
+
 	switch metricType {
 	case "mem":
-		metricType = "Memory Usage (KB)"
+		metricType = "Memory RSS (MB)"
+		datasetFunc = GenerateMemDataset
 	case "cpu":
+		datasetFunc = GenerateCPUDataset
 		metricType = "CPU %"
 	}
 
-	dataset, err := GenerateXYDataset(d, s.pid.GetStats())
+	dataset, err := datasetFunc(d, s.pid.GetStats())
 	if err != nil {
 		log.Errorf("Unable to generate dataset for graph: %v", err)
 		return
